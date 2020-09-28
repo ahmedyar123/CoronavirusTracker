@@ -10,16 +10,20 @@ import React, { useState, useEffect } from "react";
 import InfoBox from "./components/InfoBox";
 import Map from "./components/Map";
 import Table from "./components/Table";
-import "./App.css";
+import LineGraph from "./components/LineGraph";
 import { sortData } from "./util";
-//useEffect = Runs a piece of code based on condition
+import "leaflet/dist/leaflet.css";
+import "./App.css";
 
 function App() {
   const [countries, setCountries] = useState([]);
   const [country, setCountry] = useState("worldwide");
   const [countryInfo, setCountryInfo] = useState({});
   const [tableData, setTableData] = useState([]);
+  const [mapCenter, setMapCenter] = useState({ lat: 29.2985, lng: 42.551 });
+  const [mapZoom, setMapZoom] = useState(3);
 
+  //useEffect = Runs a piece of code based on condition
   useEffect(() => {
     // This code run only once when the component loads
     // async = send a request, wait for it, use it
@@ -60,6 +64,9 @@ function App() {
       .then((data) => {
         setCountry(countryCode);
         setCountryInfo(data);
+        console.log(data);
+        setMapCenter([data.countryInfo.lat, data.countryInfo.long]);
+        setMapZoom(4);
       });
   };
 
@@ -103,7 +110,7 @@ function App() {
           />
         </div>
         {/* map */}
-        <Map />
+        <Map center={mapCenter} zoom={mapZoom} />
       </div>
       <Card className="app_right">
         <CardContent>
@@ -112,6 +119,7 @@ function App() {
           <Table countries={tableData} />
           <h3>Worldwide New Cases</h3>
           {/* graph */}
+          <LineGraph />
         </CardContent>
       </Card>
     </div>
