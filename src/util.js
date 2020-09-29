@@ -1,6 +1,6 @@
 import React from "react";
-import { Circle, Popup } from "react-leaflet";
 import numeral from "numeral";
+import { Circle, Popup } from "react-leaflet";
 
 const casesTypeColors = {
   cases: {
@@ -24,15 +24,20 @@ const casesTypeColors = {
 };
 
 export const sortData = (data) => {
-  const sortedData = [...data];
-
-  return sortedData.sort((a, b) => (a.cases > b.cases ? -1 : 1));
+  let sortedData = [...data];
+  sortedData.sort((a, b) => {
+    if (a.cases > b.cases) {
+      return -1;
+    } else {
+      return 1;
+    }
+  });
+  return sortedData;
 };
 
 export const prettyPrintStat = (stat) =>
   stat ? `+${numeral(stat).format("0.0a")}` : "+0";
 
-// Draw circles on the map with interactive tooltip
 export const showDataOnMap = (data, casesType = "cases") =>
   data.map((country) => (
     <Circle
@@ -49,7 +54,7 @@ export const showDataOnMap = (data, casesType = "cases") =>
           <div
             className="info-flag"
             style={{ backgroundImage: `url(${country.countryInfo.flag})` }}
-          />
+          ></div>
           <div className="info-name">{country.country}</div>
           <div className="info-confirmed">
             Cases: {numeral(country.cases).format("0,0")}
