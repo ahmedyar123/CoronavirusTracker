@@ -11,7 +11,8 @@ import InfoBox from "./components/InfoBox";
 import Map from "./components/Map";
 import Table from "./components/Table";
 import LineGraph from "./components/LineGraph";
-import { sortData } from "./util";
+import { sortData, prettyPrintStat } from "./util";
+import numeral from "numeral";
 import "leaflet/dist/leaflet.css";
 import "./App.css";
 
@@ -23,6 +24,7 @@ function App() {
   const [tableData, setTableData] = useState([]);
   const [mapCenter, setMapCenter] = useState({ lat: 29.2985, lng: 42.551 });
   const [mapZoom, setMapZoom] = useState(3);
+  const [casesType, setCasesType] = useState("cases");
 
   //useEffect = Runs a piece of code based on condition
   useEffect(() => {
@@ -96,23 +98,32 @@ function App() {
         {/* infoBoxs */}
         <div className="app_stats">
           <InfoBox
+            onClick={(e) => setCasesType("cases")}
+            isRed
             title="Coronavirus Cases"
-            cases={countryInfo.todayCases}
+            active={casesType === "cases"}
+            cases={prettyPrintStat(countryInfo.todayCases)}
             total={countryInfo.cases}
           />
           <InfoBox
+            onClick={(e) => setCasesType("recovered")}
             title="Recovered"
-            cases={countryInfo.todayRecovered}
+            active={casesType === "recovered"}
+            cases={prettyPrintStat(countryInfo.todayRecovered)}
             total={countryInfo.recovered}
           />
           <InfoBox
+            onClick={(e) => setCasesType("deaths")}
+            isRed
             title="Deaths"
-            cases={countryInfo.todayDeaths}
+            active={casesType === "deaths"}
+            cases={prettyPrintStat(countryInfo.todayDeaths)}
             total={countryInfo.deaths}
           />
         </div>
         {/* map */}
         <Map
+          casesType={casesType}
           countries={mapCountries}
           center={mapCenter}
           zoom={mapZoom}
@@ -123,9 +134,9 @@ function App() {
           <h3>Live Cases By Country</h3>
           {/* table */}
           <Table countries={tableData} />
-          <h3>Worldwide New Cases</h3>
+          <h3>Worldwide New Cases {casesType}</h3>
           {/* graph */}
-          <LineGraph />
+          <LineGraph casesType={casesType} />
         </CardContent>
       </Card>
     </div>
